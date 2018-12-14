@@ -3,10 +3,10 @@ title: WD Blog
 SEOTitle: WD的博客 | WD Blog
 header-img: img/home-bg.jpg
 email: 693644240@qq.com
-description: "前端小白 | Web | 这里是 WD 的个人博客，一起爬出前端大坑。"
-keyword: "wudimingwo, WD, wudimingwo的博客,wudimingwo的简书, 博客, 个人网站, 互联网, Web, JavaScript, 前端"
-url: "https://wudimingwo.top"              # your host, for absolute URL
-baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
+description: '前端小白 | Web | 这里是 WD 的个人博客，一起爬出前端大坑。'
+keyword: 'wudimingwo, WD, wudimingwo的博客,wudimingwo的简书, 博客, 个人网站, 互联网, Web, JavaScript, 前端'
+url: 'https://wudimingwo.top'              # your host, for absolute URL
+baseurl: ''                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
 future: true
@@ -27,7 +27,7 @@ github_username:    wudimingwo
 highlighter: rouge
 permalink: pretty
 paginate: 7
-exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+exclude: ['less','node_modules','Gruntfile.js','package.json','README.md','README.zh.md']
 anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
 #timezone: CN  
@@ -78,7 +78,7 @@ ga_domain: wudimingwo.top
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "我本志不在前端,亦不在编程<br>半路"出家",既然已入坑,就好好爬坑"
+sidebar-about-description: '我本志不在前端,亦不在编程<br>半路出家,既然已入坑,就好好爬坑'
 #sidebar-avatar: /img/avatar-hux-ny.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -90,7 +90,7 @@ featured-condition-size: 1              # A tag will be featured if the size of 
 
 
 # Progressive Web Apps
-chrome-tab-theme-color: "#000000"
+chrome-tab-theme-color: '#000000'
 service-worker: true
 
 
@@ -103,6 +103,7 @@ page-mathjax: false
 # Friends
 friends: [
     {
-    #     title: "Su",
+    #     title: 'Su',
     #   
+    }
 ]
