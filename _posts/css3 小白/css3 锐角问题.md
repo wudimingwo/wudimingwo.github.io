@@ -1,0 +1,20 @@
+之前一直以为,单纯的dom元素很难实现有锐角的的形状,
+非锐角的可以通过多个元素进行拼接即可.
+
+实际上答案早就是已知的.
+我们知道通过border可以弄出一个三角形.
+也就是说,通过border我们可以比较容易弄出锐角.
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-ceb6c31347f146be.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+```
+.item{
+    box-sizing: border-box;
+    width: 100px;
+    height: 100px;
+    border-left: 100px solid transparent;
+    border-bottom: 100px solid transparent;
+    border-right: 50px solid blue;
+    border-top: 50px solid blue;
+//  background-color: #F08080;  
+}
+```

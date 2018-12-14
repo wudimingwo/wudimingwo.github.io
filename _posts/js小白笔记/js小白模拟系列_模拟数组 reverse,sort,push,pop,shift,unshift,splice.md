@@ -1,0 +1,417 @@
+这几个函数的特征是,更改原数组.
+
+reverse
+```
+Array.prototype.reverse = function () {
+      var arr = this;
+      var len = arr.length - 1;
+      for(var i = 0; i < Math.floor(len / 2);i++) {
+        var temp = arr[i];
+        arr[i] = arr[len - i];
+        arr[len - i] = temp;
+      }
+      return arr;
+     }
+这你就明白,两个变量互相换是多么重要的方法了吧
+```
+sort 
+版本1.0
+```
+Array.prototype.sort = function () {
+     	var arr = this;
+     	var len = arr.length;
+     	for(var i = 0; i < len - 1; i++) {
+     	  for(var j = i + 1; j < len ; j++){
+     	    if(arr[i] > arr[j]) {
+     	      var temp = arr[i];
+     	          arr[i] = arr[j];
+     	          arr[j] = temp;
+     	    }
+     	  }
+     	}
+     	return arr;
+     }
+这里默认是升序.
+但sort是可以接收一个函数的.函数按冒泡接收两个参数.
+```
+版本2.0
+```
+Array.prototype.sort = function (fn) {
+     	var arr = this;
+     	var len = arr.length;
+     	for(var i = 0; i < len - 1; i++) {
+     	  for(var j = i + 1; j < len ; j++){
+     	    if(fn ? fn(arr[i],arr[j]) > 0 : arr[i] > arr[j]){
+     	      console.log(fn(arr[i],arr[j]),'aaa');
+     	      var temp = arr[i];
+     	          arr[i] = arr[j];
+     	          arr[j] = temp;
+     	    }
+     	  }
+     	}
+     	return arr;
+     }
+
+然后突然发现 sort原生方法的遍历跟我们的稍微不同.好像是快速排序?
+```
+版本3.0
+```
+先回忆一下快速排序
+function sort (arr) {
+       var len = arr.length;
+       if(len <= 1) {
+         return arr;
+       }
+       var left = [];
+       var right = [];
+       var p = arr[0];
+       var mid = [p];
+       for(var i = 1;i < len;i++){
+         if(arr[i] < p) {
+           left.push(arr[i]);
+         }else {
+           right.push(arr[i]);
+         }
+       }
+       return sort(left).concat(mid,sort(right));
+     }
+
+然后改放在原型链上
+
+Array.prototype.sort = function () {
+     	var arr = this;
+     	
+     	function sort1 (arr) {
+       var len = arr.length;
+       if(len <= 1) {
+         return arr;
+       }
+       var left = [];
+       var right = [];
+       var p = arr[0];
+       var mid = [p];
+       for(var i = 1;i < len;i++){
+         if(arr[i] < p) {
+           left.push(arr[i]);
+         }else if(arr[i] > p){
+           right.push(arr[i]);
+         }else {
+            mid.push(arr[i])
+          }
+       }
+       return sort1(left).concat(mid,sort1(right));
+     }
+     	
+     	return sort1(arr);
+     	
+     }
+
+真是投机取巧,,
+不过怎么弄都无法用这种方法,传 fn 模拟.能力有限,
+个人感觉不可能,而且快速排序这种方式,似乎无法返回原来的数组?
+```
+版本4.0
+```
+我发现原生的排序是这样的
+先第一个和第二个比,依次类推,如果不满足条件 则一直向右比
+  如果 满足条件 则从该位开始 向左比,直到不满足条件时,回到向右比.
+我也觉得说的不是人话..
+
+反正下面这个版本能基本模拟,
+
+Array.prototype.sort = function (fn) {
+     	var arr = this;
+     	var len = arr.length;
+     	for(var i = 0;i < len - 1;i++) {
+     	  if(fn ? fn(arr[i],arr[i + 1]) > 0 : arr[i] > arr[i + 1]){//向右
+     	    var temp = arr[i];
+     	    arr[i] = arr[i + 1];
+     	    arr[i + 1] = temp;
+     	    for(var j = i;j >= 0;j--){
+     	      if(fn ? fn(arr[j - 1],arr[j]) > 0 : arr[j - 1] > arr[j]) {//向左
+     	        var temp = arr[j];
+     	            arr[j] = arr[j - 1];
+     	            arr[j - 1] = temp;
+     	      }else {
+     	        break// 这个省性能
+     	      }
+     	    }
+     	  }
+     	}
+     	return arr;
+     }
+
+这几个跟原生sort相比,数组当中有引用值的时候,排序结果会不一样.
+
+
+```
+push
+```
+Array.prototype.push = function (a) {
+      if(a === undefined){return this.length}
+      var arr = this;
+      arr[arr.length] = a;
+      return arr.length;
+     }
+```
+pop
+```
+Array.prototype.pop = function () {
+      var arr = this;
+      var len = arr.length;
+      var last = arr[len - 1] || undefined;
+      arr[len - 1] = undefined;
+      arr.length = len - 1 <= 0 ? 0 : len - 1;
+      return last
+     }
+```
+shift
+```
+Array.prototype.shift = function () {
+      var arr = this;
+      var len = arr.length;
+      var first = arr[0];
+      for(var i = 0; i < len - 1;i ++){
+        arr[i] = arr[i + 1];
+      }
+      arr[len - 1] = undefined;
+      arr.length = len - 1 <= 0 ? 0 : len - 1;
+      return first
+     }
+```
+unshift
+```
+Array.prototype.unshift = function (a) {
+      if(a === undefined){return this.length}
+      var arr = this;
+      var len = arr.length;
+      for(var i = len;i >= 1 ;i--) {
+        arr[i] = arr[i - 1];
+      }
+      arr[0] = a;
+      
+      return arr.length;
+     }
+```
+splice 个人觉得这个挺难的,
+版本1.0
+```
+Array.prototype.splice = function (a,b) {
+      var arr = this;
+      var len = arr.length;
+      var newArr = [];
+      var a = a < 0 ? len + a : a;
+      for(var i = a;i < len; i++) {
+        if(i < a + b) {
+          newArr[i - a] = arr[i];// 筛选
+        }
+        if(i < len - b + 1){
+          arr[i] = arr[i + b];// 移位
+        }else {
+          break
+        }
+      }
+      arr.length = len - b;// 删除
+      
+      return newArr
+     }
+
+勉强做到了两个参数,
+```
+版本2.0
+```
+这个splice 用的时间比上面加起来的还要多.
+
+Array.prototype.splice = function (a,b) {
+      var arr = this;
+      var newArr = [];
+      var args = [].slice.call(arguments,2);
+      var argsLen = args.length;
+      var a = a < 0 ? len + a : a;
+      var len = arr.length;
+      var lastLen = len - b + argsLen;
+       for(var i = a;i < a + b; i++) {
+                 newArr[i - a] = arr[i];// 截取 ,, 我实在是无法全都放进一个循环,这个只能摘出来了.
+               }
+               
+      if (b <= argsLen) {
+               for(var i = lastLen - 1;i >= a;i--) {
+                 if(i >= a + argsLen) {
+                   arr[i] = arr[i -argsLen + b];// 最后片段
+                 }else {
+                   arr[i] = args[i - a];//中间片段
+                 }
+               }
+      }else {
+        for(var i = a;i < lastLen;i++){
+          if(i < a + argsLen) {
+            arr[i] = args[i - a];//中间片段
+          }else{
+            arr[i] = arr[i + b - argsLen];//最后片段
+          }
+        }
+      }
+      arr.length = len - b + argsLen;// 截取
+      return newArr
+     }
+
+费了这么长时间, 写得还很丑..
+教训:
+1.思路最重要
+2.应该先从数学上把关系理清楚
+3.光抽象推理,觉得没问题,但确实有问题,
+    就不要徒劳耗费脑细胞,用具体数据,一步一步模拟处理步骤,更省时间.....
+4.觉得好浪费时间的时候, 实际上可以考虑先干点别的,55555555
+
+思路:
+第一个突破思路是,我把数据看成了三个片段
+截取片段
+截入片段
+以及剩余最后片段.
+下面是我思考过程的一种痕迹?
+//   var arr = [1,2,5,8,3,4,6,7,9];len = 9
+//             [5,8]b = 2
+//             [11,22,33] argsLen = 3
+//             [1,2,11,22,33,3,4,6,7,9]lastLen = 10
+//             lastLen = len - b + argsLen = 9 - 2 + 3 = 10
+//             最后一个片段 [3,4,6,7,9] a + argsLen = 2 + 3 === lastLen
+//             中间片段 [11,22,33] a == a + argsLen
+//             剪切片段[5,8] a == a + b
+//             我们只进行赋值操作
+
+有了思路之后最费时间的是哪里?  
+一个是处理边界,i值设定的时候,差一点输出就差几千里.
+这个时候抽象逻辑思维我觉得没什么大用,真的伤脑细胞,
+这个时候最简单的方法是,用一个数据模拟走一遍更有用.
+
+还有一个费时间的是有个坑,
+我只想着在中间片段被赋值覆盖前,要先进行最后片段的赋值,
+没想到 b > argsLen 的时候,赋值顺序应该反过来.
+
+
+最后一个教训是,
+无论是理清楚数学上的逻辑关系,
+还是其他逻辑关系,
+都只盯着代码是没有效率的.(因为还是要靠想象力,)
+也许我们应该借助类似画图工具(这样能节省想象所需耗费的能量)
+```
+网上找到一个模拟方法,不过用了一些数组方法
+# [使用js实现splice方法](https://www.cnblogs.com/xingguozhiming/p/8629285.html)
+
+===================================
+2018/11/5
+重新练习了一遍
+发现之前我写的,我自己都看不懂了.感觉当时应该挺用脑子了的,哈哈.
+```
+        <script type="text/javascript">
+            
+            Array.prototype.myReverse = function () {
+            	var self = this;
+            	var arr = [];
+            	var len = self.length;
+            	var i = 0;
+            	while (len--){
+            		arr[i++] = self[len];
+            	}
+            	return arr;
+            }
+            
+            Array.prototype.myPush = function (item) {
+            	var self = this;
+            	var len = self.length;
+            	self[len] = item;
+            	return self.length;
+            }
+            
+            Array.prototype.myPop = function () {
+            	var self = this;
+            	var len = self.length;
+            	var a = self[len - 1];
+            	self.length = len - 1;
+            	return a
+            }
+            Array.prototype.myUnshift = function (item) {
+              var self = this;
+              var len = self.length + 1;
+              while (len--){
+              	if (len == 0) {
+              		self[len] = item;
+              	} else {
+              	  self[len] = self[len - 1]
+              	}
+              }
+              return self.length;
+            }
+            Array.prototype.myShift = function () {
+              var self = this;
+              var len = self.length;
+              var a = self[0];
+              for(var i = 0; i < len - 1;i++) {
+                self[i] = self[i + 1];
+              }
+              self.length = len - 1;
+              return a;
+            }
+            Array.prototype.mySplice = function (a,b) {
+              var self = this;
+              var len = self.length;
+              var args = [];
+              var a = a > 0 ? a : len + a;
+              for(var i = 2; i < arguments.length;i++) {
+                args[i - 2] = arguments[i];
+              }
+              
+              var arr1 = []; // 截取的
+              
+              for(var j = a; j < self.length; j++) {
+                arr1[j - a] = self[j];
+              }
+              console.log(a);
+              self.length = a;// 第一段.
+              var arr2 = [];// 最后一段
+              for(var k = b; k < arr1.length; k++) {
+                arr2[k - b] = arr1[k];
+              }
+              
+              arr1.length = len - a - b;// 截取要返回的.
+              
+              var len1 = self.length;
+              var len2 = args.length;
+              var len3 = arr2.length;
+              
+              // 拼接self
+              for(var q = len1 ; q < len1 + len2 + len3; q++) {
+                if (q < len2 + len1) {
+                	self[q] = args[q - len1]
+                }else {
+                  self[q] = arr2[q - len1 - len2];
+                }
+              }
+              return arr1;
+              
+            }
+            
+            Array.prototype.mySort = function (handle,context) {
+              var context = context || window;
+              function handle1 (a,b) {
+              	return a - b
+              }
+              var handle = handle || handle1;
+            	var self = this;
+            	var len = self.length;
+            	for(var i = 0; i < len - 1;i++) {
+            	  for(var j = i + 1; j < len; j++) {
+            	    if (handle.call(context,self[i],self[j]) >= 0) {
+            	      // 这里花了点时间. 负数本身的布尔值不是false
+            	    	var temp = self[i];
+            	    	self[i] = self[j];
+            	    	self[j] = temp;
+            	    }
+            	  }
+            	}
+            	return self;
+            }
+            
+            
+        </script>
+```

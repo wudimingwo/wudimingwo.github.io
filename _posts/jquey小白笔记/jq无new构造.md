@@ -1,0 +1,67 @@
+正常版本构造一个实例对象
+```
+function jQuery () {
+          	this.name = 'mike';
+          	this.age = 18;
+          }
+          jQuery.prototype.son = 'peter';
+          
+          
+          console.log(new jQuery().name);
+          console.log(new jQuery().age);
+          console.log(new jQuery().son);
+```
+无new构造
+```
+function jQuery () {
+          	return new jQuery.prototype.init();
+          }
+          jQuery.prototype.init = function () {
+          	this.name = 'mike';
+            this.age = 18;
+          }
+          jQuery.prototype.init.prototype = jQuery.prototype;
+          jQuery.prototype.son = 'peter'
+          console.log(jQuery().name);
+          console.log(jQuery().age);
+          console.log(jQuery().son);
+
+看起开很丑,但一旦用闭包包裹起来.
+```
+```
+var jQuery = (function () {
+          	
+           function jQ () {
+          	return new jQ.prototype.init();
+          }
+          jQ.prototype.init = function () {
+          	this.name = 'mike';
+            this.age = 18;
+          }
+          jQ.prototype.init.prototype = jQ.prototype;//语句1
+          jQ.prototype.son = 'peter'
+           return jQ;
+          })()
+          console.log(jQuery().name);
+          console.log(jQuery().age);
+          console.log(jQuery().son);
+
+这写得相当的巧妙了.
+语句1的作用是,如果我在jQuery.prototype上扩展方法,确保实例能够调用.
+
+其实init函数没必要一定写在原型链上吧?
+var jQuery = (function () {
+          	
+           function jQ () {
+          	return new init();
+          }
+           function init () {
+          	this.name = 'mike';
+            this.age = 18;
+          }
+          init.prototype = jQ.prototype;
+          jQ.prototype.son = 'peter'
+           return jQ;
+          })()
+当然,把init定义在原型链上,从结构上可能定义在这里更合理,或者就是想秀?确实很秀.
+```

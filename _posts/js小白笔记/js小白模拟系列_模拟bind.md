@@ -1,0 +1,57 @@
+这个比call和apply 要稍微复杂点,多层函数的嵌套
+版本1.0 没解决原型链
+```
+Function.prototype.myBind = function (context) {
+      var context = context || window;
+     	var args = [].slice.call(arguments,1);//第一位是 context 其余的要传给fn
+     	var fn = this;
+     	return function () {
+     		var _args = [].slice.call(arguments);
+     		return fn.apply(context,args.concat(_args));
+     	}
+     }
+     
+       var name = 'window';
+       var obj = {name : 'obj'}
+       function test (a,b,c,d) {
+       	console.log(this.name);
+       	console.log(a,b,c,d);
+       }
+       
+       var newTest = test.myBind(obj,'a');
+       newTest('b','c','d');
+```
+版本2.0 解决原型链继承.
+```
+ Function.prototype.myBind = function (context) {
+      var context = context || window;
+     	var args = [].slice.call(arguments,1);//第一位是 context 其余的要传给fn
+     	var fn = this;
+     	function temp () {};
+     	temp.prototype = fn.prototype;
+     	F.prototype = new temp();
+     	function F () {
+     		var _args = [].slice.call(arguments);
+     		return fn.apply(this instanceof temp ? this : context,args.concat(_args));
+     	}
+//这里涉及两个知识点,一个是继承,这里用的是圣杯模式
+//一个是new  . 没有new this指向 window , 如果new this指向 F 构造出来的实例.
+     	return F
+     }
+     
+       var name = 'window';
+       var obj = {name : 'obj'}
+       
+       test.prototype.age = 18;
+       function test (a,b,c,d) {
+        this.name = 'mike';
+       	console.log(this.name);
+       	console.log(a,b,c,d);
+       }
+       
+       var newTest = test.myBind(obj,'a');
+       var obj = new newTest('b','c','d');//mike,a,b,c,d
+       console.log(name);// window
+       console.log(obj.age);//18
+       console.log(obj.name);//mike
+```

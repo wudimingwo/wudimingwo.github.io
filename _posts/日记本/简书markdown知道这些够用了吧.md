@@ -1,0 +1,140 @@
+参考
+[简书上使用Markdown（超详细）](https://www.jianshu.com/p/c8259702a22e)
+[献给写作者的 Markdown 新手指南](https://www.jianshu.com/p/q81RER)
+[让写作更优雅——Markdown指南](https://www.jianshu.com/p/78fb460f538e)
+第三篇最详细..
+---
+#标题
+```
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题 
+```
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+---
+#无序列表
+```
+- 文本1
+- 文本2
+- 文本3
+```
+- 文本1
+- 文本2
+- 文本3
+```
+* 文本1
+* 文本2
+* 文本3
+```
+* 文本1
+* 文本2
+* 文本3
+---
+#有序列表
+```
+1. 文本1
+1. 文本1
+1. 文本1
+```
+1. 文本1
+1. 文本1
+1. 文本1
+----
+#图片
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-dec22d971e53f040.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-ed606209198d404b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+---
+#网址
+```
+[简书上使用Markdown（超详细）](https://www.jianshu.com/p/c8259702a22e)
+```
+[简书上使用Markdown（超详细）](https://www.jianshu.com/p/c8259702a22e)
+---
+#博客引用
+```
+> 这是引用
+```
+> 这是引用
+---
+#粗体,斜体,粗斜体
+```
+*斜体*
+**粗体**
+***粗斜体***
+```
+*斜体*
+**粗体**
+***粗斜体***
+---
+#代码引用
+呵呵,这个只能截图展示了嘛?
+##单句
+`var a = b`
+
+![用``](https://upload-images.jianshu.io/upload_images/13637909-9f4abbb84f96fd13.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+多句
+
+```
+(function () {
+  console.log(123)
+}())
+
+```
+![用```](https://upload-images.jianshu.io/upload_images/13637909-d8d2413de46e72e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+---
+表格
+```
+aaa|bbb|ccc
+-|-|-
+a1|b1|c1
+a1|b1|c1
+```
+aaa|bbb|ccc
+-|-|-
+a1|b1|c1
+a1|b1|c1
+---
+#分割线
+```
+---或者
+***
+```
+---
+***
+#删除?
+```
+~~删除~~
+```
+~~删除~~
+
+---
+#给字体加颜色?
+```
+$\color{green}{红色} $
+$\color{#f00000}{红色} $
+支持#000 颜色,还是挺牛逼的
+$\color{rgb(90,123,0)}{红色} $
+咦?没想到 rgb也支持
+$\color{rgba(90,123,0,0.5)}{红色} $
+呵呵,,rgba也支持.
+$\color{hsla(100,100%,50%,0.8)}{红色} $
+.. hsla也支持, 估计打死用不上啊.
+```
+$\color{green}{红色} $
+$\color{#f00000}{红色} $
+$\color{rgb(90,123,0)}{红色} $
+$\color{rgba(90,123,0,0.5)}{红色} $
+$\color{hsla(100,100%,50%,0.8)}{红色} $

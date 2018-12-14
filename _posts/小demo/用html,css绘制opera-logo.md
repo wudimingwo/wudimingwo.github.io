@@ -1,0 +1,81 @@
+![opera-logo](https://upload-images.jianshu.io/upload_images/13637909-9c692a1357656b37.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+第一种
+用伪元素
+▪ html
+```
+<div></div>
+```
+▪ css
+```
+<style type="text/css">
+            div{
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%,-50%);
+              
+              width: 100px;
+              height: 100px;
+              border-radius: 50%;
+              
+              background-image: linear-gradient(to bottom,#f78384,#90090a);
+              
+            }
+            div:before {
+              content: '';
+              display: block;
+              width: 50px;
+              height: 80px;
+              
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%,-50%);
+              
+              border-radius: 50%;
+              background-color: #fff;
+            }
+        </style>
+```
+
+第二种 用径向渐变?
+▪html
+```
+<div><div>
+```
+▪css
+```
+<style type="text/css">
+            div{
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%,-50%);
+              
+              width: 100px;
+              height: 100px;
+              border-radius: 50%;
+                    
+              background-image: radial-gradient(ellipse 22px 41px,white 30px,transparent),       
+                                linear-gradient(to bottom,#f78384,#90090a);
+            }
+        </style>
+```
+关键是用两个,或者多个重叠,利用transparent这个颜色.
+也许有高手,只需要一个radial-gradient就能解决
+
+第三种 利用svg ,,
+这个不熟悉,基本就是从手册中复制粘贴,组合一下,调整了一下数据
+▪html
+```
+<svg width="500px" height="500px" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                 <stop offset="0%" style="stop-color:#f78384;stop-opacity:1" />
+                 <stop offset="100%" style="stop-color:#90090a);stop-opacity:1" />
+              </linearGradient>
+             <circle cx="250" cy="250" r="100" stroke="black" stroke-width="0" fill="url(#grad1)" />
+             <ellipse cx="250" cy="250" rx="40" ry="80" style="fill:white" />
+            </svg>
+```
+

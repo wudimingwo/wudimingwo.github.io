@@ -1,0 +1,14 @@
+Boolean(0)
+//false
+Boolean('')
+//false
+Boolean(undefined)
+//false
+Boolean(NaN)
+//false
+Boolean({})
+//true
+Boolean([])
+//true
+Boolean(null)
+//false

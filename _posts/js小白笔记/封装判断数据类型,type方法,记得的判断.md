@@ -1,0 +1,108 @@
+版本1.0 这几乎能判断所有种类了
+```
+function type (obj) {
+          	var cache = {
+          	  '[object Number]': 'number',
+          	  '[object Array]' : 'array',
+          	  '[object Object]' : 'object',
+          	  '[object String]' : 'string',
+          	  '[object Boolean]' : 'boolean',
+          	  '[object Null]' : 'null',
+          	  '[object Undefined]' : 'undefined',
+          	  '[object Function]' : 'function',
+                  '[object RegExp]' : 'regexp'
+          	}
+          	
+          	return cache[Object.prototype.toString.call(obj)];
+          }
+
+这里你发现了嘛,就像obj['kaljgal  aljkgas  alkdjga'] 这种方式一样,
+定义属性名的时候,如果用字符串形式, 则基本什么字符串都可以当做属性名.
+```
+版本2.0 放原型链上.
+```
+Object.prototype.typeAll = function () {
+          	var cache = {
+          	  '[object Number]': 'number',
+          	  '[object Array]' : 'array',
+          	  '[object Object]' : 'object',
+          	  '[object String]' : 'string',
+          	  '[object Boolean]' : 'boolean',
+          	  '[object Null]' : 'null',
+          	  '[object Undefined]' : 'undefined',
+          	  '[object Function]' : 'function',
+                  '[object RegExp]' : 'regexp'
+          	}
+          	
+          	return cache[Object.prototype.toString.call(this)];
+          }
+因为大多数类型的数据,以及包装类,最后的原型都是 Object.prototype
+所以只要不重名,基本都能调用.
+
+          var num = 0;
+          console.log([].typeAll());
+          console.log({}.typeAll());
+          console.log(new Number().typeAll());
+          console.log('adgkj'.typeAll());
+          console.log(false.typeAll());
+          console.log(fn.typeAll());
+          console.log(num.typeAll());
+          以上的情况都能调用.
+          以下的情况都不能调用.因为任何形式的调用方法,这三种都是不行的,
+          要么是因为压根没有原型链,要么就是对原型链做了什么手脚. 这就不是我一个小白知道的了.
+          console.log(null.typeAll());
+          console.log(undefined.typeAll());
+          console.log(0.typeAll());// 数字类型的数据,如果只是调用可能不不需要包装类的参与.
+
+
+
+```
+=========================
+在这里回忆稍微整理一下,各种记得的判断
+
+```
+//          原始值类型 
+//          Undefined,Null,Boolean,Number,String
+            
+            
+//          这个可能是最准确的?
+            Object.prototype.toString.call(a) == '[object Number]';
+            Object.prototype.toString.call(a) == '[object Array]';
+            Object.prototype.toString.call(a) == '[object Object]';
+            Object.prototype.toString.call(a) == '[object String]';
+            Object.prototype.toString.call(a) == '[object Boolean]';
+            Object.prototype.toString.call(a) == '[object Null]';
+            Object.prototype.toString.call(a) == '[object Undefined]';
+            Object.prototype.toString.call(a) == '[object Function]';
+            Object.prototype.toString.call(a) == '[object RegExp]';
+            
+            // 这里主要是分辨原始值还是引用值. function 是 属于引用值, null算原始值?
+            typeof a == "boolean"
+            typeof a == "function"
+            typeof a == "number"
+            typeof a == "object" 
+            // 这里 包含 null, {} , [] ,RegExp
+            typeof a == "string"
+            typeof a == "undefined"
+            
+            
+            isNaN(a) == true;// 判断是否为 NaN 涉及隐式类型转换 调用的是 Number(a)
+            // NaN, {} , [1,2,3],undefined,function,RegExp,"adg"
+            // [],[1](长度只有1位),"","123",null 不会变成NaN
+            
+            // 判断是否为数组
+            Array.isArray(a) == true;
+            
+            // 本来是用于获取数组里 该元素的 索引
+            // 也可以用来判断有没有 没有 返回 -1
+            arr.indexOf(item);
+            // 倒数
+            arr.lastIndexOf(item);
+            
+            // 可用来判断数组中该元素是否只有一个, 但包含,该元素不在数组中的情况, 都返回 -1.....
+            arr.indexOf(item) == arr.lastIndexOf(item);
+            
+            // 跟indexOf 类似, 不过只能传函数, 比indexOf 稍微强大 ,返回 索引值, 没有则返回 -1
+            arr.findIndex( a => a == 9)
+```
+

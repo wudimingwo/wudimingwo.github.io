@@ -1,0 +1,60 @@
+例 var demo = 123;
+var num = demo.toString();
+console.log(typeof(num) + “:” + num);
+答案显示 string: 123。相当于把 123 转换字符串。
+想把谁转换成字符串，就写成谁.toString，上面是想把 demo 转换成 toString，写成
+demo.toString
+
+
+例 var demo = undefined;
+var num = demo.toString();
+console.log(typeof(num) + “:” + num);
+答案显示报错，undefined 和 null 不能用 toString
+
+
+这个可以这么理解,toString是对象调用的形式,
+也就是说,实际上toString是不同包装类上的,原型链上的方法.
+
+null,undefined 是没有原型链的,所以应该不能调用该方法,也无法调用任何方法.
+
+
+var num = 123;
+此时num是可以调用方法的,调用的是Number.prototype上的方法.
+这里我也不是那么清楚.似乎是因为包装类构造出来的.
+但123.toString是不行的,123是纯粹的原始值.
+
+同理 num.toFixed()是可以用的
+但123.toFixed是不可以用的
+这是拿变量接收的一个好处.
+
+
+
+进制转换:十进制转换成目标进制,num.toString(radix)
+radix 意思是以十进制为基底，转换成目标进制（即 radix 进制）
+
+
+例 var demo = 10;
+var num = demo.toString(8);
+console.log(typeof(num) + “:” + num);
+答案 12
+
+
+例 var demo = 20;
+var num = demo.toString(8);
+console.log(typeof(num) + “:” + num);
+答案 24。以十进制为基底，把 20 转换成 8 进制，就是 24
+
+
+例给你一个二进制的数，转换成十六进制，是先从二进制到十进制再到十六进制
+
+var num = 10101010;
+var test = parseInt(num, 2);
+console.log(test.toString(16));
+答案 aa
+
+
+例 var num = 10000;
+var test = parseInt(num, 2);
+console.log(test.toString(16));
+答案 10
+

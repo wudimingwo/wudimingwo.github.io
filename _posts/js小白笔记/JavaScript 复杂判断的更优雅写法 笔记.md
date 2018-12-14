@@ -1,0 +1,486 @@
+原文:[JavaScript 复杂判断的更优雅写法](https://juejin.im/post/5bdfef86e51d453bf8051bf8?utm_source=gold_browser_extension)
+
+正好看到这篇文章时,我也思考过几次如何简化 if else的问题.
+然后我就跟着这个又打了一遍.
+
+他写的思路很清晰, 逻辑也很清晰.
+后面的字符串的处理,也很脑洞大开.
+
+不过我跟着大概打完一遍之后,
+感觉还是有很多地方有疑问.
+
+怎么说呢, 就好像, 我隐隐约约摸到了,看到了什么东西,
+但我无法用正确的概念体系去表达,
+而因为我没有这种明确的概念语言体系,
+我想掌握起来,甚至记忆起来也感觉很费劲?
+
+首先是这整片下来,是存在一个前提的,或者适用的范围是这样的.
+如果稍微细心一点就会发现.
+所有的 if 里的条件 都是 ==
+而如果 == 的原始值, 也就是 布尔值, 数字,字符串,
+则非常适合用 对象的形式.
+因为对象天然键值对形式,就包含了这种 == 的 if else
+
+第二个问题是维度问题.
+(天呐,我觉得科班出身的优势可能是拥有健全的概念体系,我特么不知道词是不是合适啊)
+我们以对象为例.
+储存对象有纵向维度,和横向维度.
+
+```
+纵向
+obj = {
+    "peter" : {
+       "a" : "aa" 
+    },
+    "mike" : {
+        "a" : "bb"
+    }
+}
+特点是,直接通过索引我们就可以找到值,不需要去遍历,判断
+也许语义化可以更好?
+
+横向
+obj = {
+  0 : {
+    master : "peter",
+    type : "a",
+    value : "aa"
+  },
+  1 : {
+    master : "mike",
+    type : "a",
+    value : "bb"
+  }, 
+}
+首先这种情况用数组可能更好表达.
+特点是,需要遍历, 
+相比上纵向的层级较少?
+而且从某种角度来讲,数据更加的丰富,
+可操作的返回更多? 可扩展性更强?
+```
+问题在于, 无论是纵向还是横向,
+我们都可以认为,多元条件时,想要正确的锁定,都需要增加维度.
+要么是横向?要么是纵向?
+
+但这里并非是二选一, 可选的范围很广,
+不同的数据放置方式,
+可扩展性不同,
+最终调用的方式上应该也会有所差异吧?
+我暂时经验少, 到底谁跟谁应该在一起,
+是根据数据的来源定?
+还是根据数据的语义来定? (面向对象?)
+还是根据别的什么? 常量和变量? 
+如果从语义上, 有一些维度比另一些维度要高,
+那么就要体现出来?
+比如 master 的维度,似乎比 type的维度高?
+(在这个例子上完全也可以让type的维度更高?)
+怎么判断谁的维度更高? 根据必须有 a 才能有b 的原则?
+当然这些我现在是不清楚的.
+甚至我可能都问不出正确的问题.
+```
+obj = {
+ "peter" : {
+    type : "a",
+    value : "aaa"
+  } ,
+或者
+  0 : [{master : "mike",type : "a"},"aa"]
+}
+```
+
+第三个问题是,
+我们在第一个问题中说到, 
+本文的适用情况基本上都是== 情况.
+那么其他类型的条件 能否转化成 == 这种情况?
+或者更直接一点, 我们是否可以转换成一个字符串?
+
+其实这里是有两种思路的.
+第一种思路
+我们首先回到if 的形式上
+```
+(a,b) // 参数入口
+if (conditionA && conditionB) {
+ function a
+ function b
+}
+```
+从结果上看应该是
+根据 condition 和 参数(a,b) 确定 找到 相应的 function
+假设各种funciton 都放在了一个个对象里, 并且有 索引可以找到.
+那么 condition 就需要 返回索引
+但condition 一般是要返回布尔值, 要么false 要么 true
+我们可以转换成 根据 参数 a,b 和 false true 返回一个或多个字符串?
+
+
+回想策略模式,
+是用一个数组,或者对象, 把所有的condition都搁置起来.
+不同的参数值 + 不同的condition 返回不同的 字符串(或者布尔值),
+根据多个condition 返回的值(字符串或布尔值),调用相应的函数,
+或者生成相应的执行函数放入某个数组里.
+
+第四个问题是,
+也就是我抄写的这篇博文打开我脑洞的地方.
+从结果上,我们是需要一个标记,来找到数据.
+而我在上面讲的横向还是纵向的前提都是,对象,或者数组.
+所以才会出现层级.
+
+但做标记可以用字符串.
+有很多种例子
+最典型的就是 JSON,严格来讲, JSON应该是个字符串,但可以存储多种数据.
+比如url
+REST 模式根据层级也能传一些东西,
+非REST模式 可以用 key = value 方式存数据, 而这些都是数据.
+
+在这篇文章里, 他没有把 value 变成字符串,
+但是把多维度的索引,合成了一个字符串. 进行了降维.
+这就很牛逼!
+而且最后用上了 正则
+
+脑子有点乱.
+我们开头说, 本篇适用的情况是 ==
+也就是 一一对应的关系, 一个索引对应一个值(这个值可能是数据,可能是函数)
+之后说的是多元条件, 相当于是 多对一.
+
+
+而字符串拼接降维和正则的使用,更多的是,
+设置索引?
+不只可以完成多对一,
+也能完成一对多. 比如通过一个字符串, 可以获取满足正则条件的多个数据?
+
+我肯定把一个简单的问题,想复杂了.
+
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewprot" content="width=device-width, initial-scale=1.0"/>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+        <title>dddd</title>
+        <style type="text/css">
+            
+        </style>
+    </head>
+    <body>
+         
+        <script type="text/javascript">
+          // 简化 if else
+          // 隐藏的 if else 全都是 if else
+          // 键值对
+          // 转化成布尔值,
+          // 多元?
+          // 复杂多级运算?
+          
+          
+          const result1 = (str) => {
+          	if (str == "a") {
+          		return "aa"
+          	}else if (str == "b") {
+          		return "bb"
+          	}else if (str == "c") {
+          		return "cc"
+          	}else {
+          	  return "dd"
+          	}
+          }
+          
+          
+          const result2 = (str) => {
+            switch (str){
+              case "a":
+                return "aa"
+                break;
+              case "b":
+                return "bb"
+                break;
+              case "c":
+                return "cc"
+                break;
+                
+              default:
+              return "dd"
+                break;
+            }
+          }
+          
+          
+          
+          const result3 = (str) => {
+            var obj = {
+              "a" : "aa",
+              "b" : "bb",
+              "c" : "cc",
+              "default" : "dd"
+            }
+            
+            return obj[str] || obj["default"]
+          }
+          
+          const actions = new Map([
+            ["a","aa"],
+            ["b","bb"],
+            ["c","cc"],
+            ["default","dd"]
+          ])
+          
+          const result4 = (str) => {
+            var end = actions.get(str) || actions.get("default");
+            return end
+          }
+          
+          
+          
+//        var end = result4('a')
+//        console.log(end);
+          
+          // 二元条件
+          
+          const tResult1 = (master,str) => {
+            if (master == "mike") {
+            	if (str == "a") {
+            		return "aa"
+            	}else if(...){
+            	  ...
+            	}
+            }else if (master == "peter") {
+            	if (str == "a") {
+                return "aaa"
+              }else if(...){
+                ...
+              }
+            }
+          }
+          
+          const tResult2 = (master,str) => {
+            switch (master){
+            	case "mike":
+            	       switch (str){
+            	       	case "a":
+            	       	return "aa"
+            	       	...
+            	       }
+            	case "peter":
+            	       switch (str){
+                      case "a":
+                      return "aa"
+                      ...
+                     }
+            }
+          }
+          // 我原来的可能的思路是这样的
+          const tResult3 = (master, str) => {
+            var obj = {
+              "peter" : {
+                "a" : "aaa",
+                "b" : "bbb",
+                "c" : "ccc",
+                "default" : "ddd"
+              },
+              "mike" : {
+                "a" : "aa",
+                "b" : "bb",
+                "c" : "cc",
+                "default" : "dd"
+              }
+            }
+            return obj[master][str] || obj[master]["default"]
+          }
+          // 又或者是这样的
+          
+          const tResult4 = (master, str) => {
+            var arr = [
+              {
+                master : "peter",
+                type : "a",
+                value : "aaa"
+              },
+              {
+                master : "peter",
+                type : "b",
+                value : "bbb"
+              },
+              {
+                master : "peter",
+                type : "c",
+                value : "ccc"
+              },
+              {
+                master : "peter",
+                type : "default",
+                value : "ddd"
+              },
+              {
+                master : "mike",
+                type : "a",
+                value : "aa"
+              },
+              {
+                master : "mike",
+                type : "b",
+                value : "bb"
+              },
+              {
+                master : "mike",
+                type : "c",
+                value : "cc"
+              },
+              {
+                master : "mike",
+                type : "default",
+                value : "dd"
+              }
+            ]
+            var end1,end2;
+            arr.forEach((item, index) => {
+              if (item.master == master) {
+              	if (item.type == str) {
+              		 end1 = item.value
+              	}else if (item.type == "default"){
+              	   end2 = item.value
+              	}
+               }
+              })
+            return end1 || end2
+          }
+          
+          const tActions = new Map([
+            [{master : 'peter',type : "a"},"aaa"],
+            [{master : 'peter',type : "b"},"bbb"],
+            [{master : 'peter',type : "c"},"ccc"],
+            [{master : 'mike',type : "a"},"aa"],
+            [{master : 'mike',type : "b"},"aa"],
+            [{master : 'mike',type : "c"},"aa"]
+          ])
+          // 本来我对 new Map() 不熟悉
+          // 只知道有 get,set,has,delete
+          // 没想到 可以 用[...actions] 的方式,瞬间变成真正的数组
+          // 然后就可以快乐的用数组的方法了.
+          // 不过话说回来, 这个方法,压根用的不是 new Map() 完全可以用一个数组来进行
+          // 他核心找到数据的方式,也是 filter 和 forEach..
+          const tResult5 = (master, type) => {
+            var action = [...tActions].filter(([item,value]) => {
+              return item.master == master && item.type == type
+            })
+            var end;
+            action.forEach(([item, value]) => {
+              end = value
+            })
+            return end
+          }
+          
+          var end = tResult5("mike","b");
+          console.log(end);
+          
+          //脑洞大开的是 字符串拼接的方式,降维.
+          
+          const sResult1 = (master, type) => {
+          	if (`${master}_${type}` == "peter_a") {
+          		return "aaa"
+          	}
+          	if (`${master}_${type}` == "peter_b") {
+          		return "bbb"
+          	}
+          	if (`${master}_${type}` == "peter_c") {
+          		return "ccc"
+          	}
+          	if (`${master}_${type}` == "mike_a") {
+          		return "aa"
+          	}
+          	if (`${master}_${type}` == "mike_b") {
+          		return "bb"
+          	}
+          	if (`${master}_${type}` == "mike_c") {
+          		return "cc"
+          	}
+          }
+          
+          var end = sResult1("peter","b");
+          console.log(end);
+          
+          const sResult2 = (master, type) => {
+            let str = `${master}_${type}`;
+            switch (str) {
+              case "peter_a" :
+                return "aaa";
+              case "peter_b" :
+                return "bbb";
+              case "peter_c" :
+                return "ccc";
+              case "mike_a" :
+                return "aa";
+              case "mike_b" :
+                return "bb";
+              case "mike_c" :
+                return "cc";
+            }
+          }
+//        var end = sResult2("mike","a");
+//        console.log(end);
+          
+          const sResult3 = (master, type) => {
+            var str = `${master}_${type}`;
+            let obj = {
+              "peter_a" : "aaa",
+              "peter_b" : "bbb",
+              "peter_c" : "ccc",
+              "mike_a" : "aa",
+              "mike_b" : "bb",
+              "mike_c" : "cc",
+              "mike_default" : "dd",
+              "peter_default" : "ddd"
+            }
+            return obj[str] || obj[`${master}_default`]
+          }
+            const sResult4 = (master, type) => {
+            var str = `${master}_${type}`;
+            let obj = {
+              [/peter_[abc]/] : "aaa",// 虽然不会报错, 但不可能得到想要的结果.该正则不起作用.
+              "mike_a" : "aa",
+              "mike_b" : "bb",
+              "mike_c" : "cc",
+              "mike_default" : "dd",
+              "peter_default" : "ddd"
+            }
+            return obj
+            return obj[str] || obj[`${master}_default`]
+          }
+            
+//          var end = sResult4("peter","a");
+//        console.log(end);
+          
+          const tActions3 = new Map([
+            [/^mike_[abc]$/,"aa"],
+            [/^peter_[abc]$/,"aaa"],
+          ])
+          
+          const sResult5 = (master, type) => {
+            var action = [...tActions3].filter(([item,value]) => {
+              return item.test(`${master}_${type}`)
+            })
+            var end;
+            action.forEach(([item,value]) => {
+              end = value;
+            })
+            
+            return end
+            
+            // 像上面这种,不是要执行什么列表,而是返回值的情况可以
+//          var end;
+//          [...tActions3].forEach(([item, value]) => {
+//            if(item.test(`${master}_${type}`)) {
+//              end = value
+//
+//            }
+//          })
+//          return end
+            
+          }
+           var end = sResult5("peter","b");
+          console.log(end);
+          
+          
+        </script>
+    </body>
+</html>
+
+```

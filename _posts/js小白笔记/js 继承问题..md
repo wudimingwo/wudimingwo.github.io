@@ -1,0 +1,274 @@
+网上有很多关于继承的东西.
+渡一讲得个人觉得是最由浅入深的.
+渡一的可以直接去腾讯课堂搜索.
+我们这里在借鉴一两个博客,来抄写整理一下.
+### [*JS*实现*继承*的几种方式 - 幻天芒 - 博客园](https://www.baidu.com/link?url=ONpxtjhhXK4DsIlzIcMQFv0vYffaP1vMJHAEn7hA203_Q1BX15oohKWXuDS5U4IvpZqSQgUtXcyIwh4XAodZ1_&wd=&eqid=d39e36700008f96c000000035b7d2270&ck=3318.11.0.0.0.354.141.0&shh=www.baidu.com&sht=98012088_3_dg)
+
+# [web前端开发必懂之一：JS继承和继承基础总结](https://www.cnblogs.com/diligenceday/p/4246515.html)
+
+
+首先不要被各种名字所吓倒.
+工厂模式
+原型链继承
+构造继承
+实例继承
+拷贝继承
+组合继承
+寄生组合继承
+等等.
+
+如果清楚 实例,构造函数,原型之间的关系,那么一切都好理解.
+
+我写的系统性肯定没那么强, 我每次都是按照我当时的水平,
+按照自己理解的线索写的. 想要系统性的体系讲解,上面那两个博客也可以,
+百度一下应该都有.
+
+
+首先,我有一个误会,误解.
+什么是继承? 我本以为的继承是, 实例继承原型. 也该是这个.
+但我们看一下所谓的工厂模式,构造继承.
+
+```
+构造继承
+function Father (name,age) {
+     	this.name = name;
+     	this.age = age;
+     }
+ function Son (name, age, height) {
+     	Father.call(this,name , age);
+     	this.height = height;
+     }
+  var son = new Son('mike',18,180);
+
+你发现了嘛? 实际上son 是无法访问 Father的原型链的.也就是没有继承Father.prototype.
+但这种也叫继承.
+
+然后还有 工厂模式
+function Son (name,age) {
+       var obj = new Object();
+     	obj.name = name;
+     	obj.age = age;
+     	return obj
+     }
+     
+     var son = Son('mike',18);
+son 也是没有继承 Son.prototype的
+
+因为我刚开始对继承的定义有误差,所以刚开始,我不太理解什么叫多继承?
+要怎么样才能让一个对象继承多个没有继承关系的原型? 很难啊.不可能啊.
+
+结果发现继承还指这种情况.
+所谓的多继承就是.
+我可以Father.call() Mother.call() Uncle.call() 
+我觉得这个当然也很重要.
+
+```
+但很明显,我觉得继承原型这个事可能更重要一点.
+那我们到底是怎么继承的?
+```
+Son.prototype.height = 180;
+     function Son (name,age) {
+       this.name = name;
+       this.age = age;
+     }
+     
+     var son = Son('mike',18);
+     
+     console.log(son);
+
+最基本的继承是,一个构造函数,new 出来的实例对象, 能继承函数的原型.
+
+其实当时我刚碰到这个的时候,实在是很难理解.(你肯定耻笑我)
+难以理解在哪里呢?
+我们知道,现在有三个要素, 一个实例,一个函数,一个原型.
+我们可以说, 实例的原型, 也可说 函数的原型.
+我们可以说,实例的构造函数,也可说 原型的构造函数.
+
+这尼玛,到底是谁的?
+还好,我们应该只能说 这个函数的实例, 而不会说这个原型的实例.
+
+我为什么纠结这个?
+因为我想不通啊, 构造函数可以new出一个对象,
+可现在是new出了两个对象啊, 一个实例,一个原型.
+
+后来我明白了,刚开始应该是'函数的原型'.
+为什么这么说呢? 
+因为一个函数即使他没有new ,只要定义了,他的prototype就会存在.
+同理,即使没有new,这个原型对象的构造函数就是这个函数.
+感觉说的不是人话..
+
+
+Son.prototype.height = 180;
+     function Son (name,age) {
+       this.name = name;
+       this.age = age;
+     }
+     console.log(Son.prototype.height);// 可以访问.
+     console.log(Son.prototype.constructor);// 就是 Son
+
+也就是说,一个实例上确实是没有constructor 这个属性的.
+他访问的是原型上的constructor;
+然后我们就能很好的理解这个现象了.
+function Father () {}
+function Son () {}
+Son.prototype.constructor == Son // true 这个时候理解没问题 
+Son.prototype = new Father();// 此时Son.prototype这个对象被赋值了,原来的属性都没了.
+Son.prototype.constructor == Father// true new Fahter()
+这个实例上没有,去找Father.prototype 上的constructor 当然返回 Father了.
+
+其实说的很多,里面的东西很少.
+
+反正我们理解了,即使没有new ,Function 被定义的时候, 就已经有Function.prototype了,
+
+那么new的时候到底干了什么?
+```
+```
+模拟写一次new.
+
+var myNew = function (fn) {
+       var self = Object.create(fn.prototype);// 这个就是用来让self 继承 fn.prototype的.
+        return function () {
+        	fn.apply(self,arguments);
+        	return self;
+        }
+}
+     function Son () {
+     	this.name = 'mike';
+     	return 123
+     }
+     var son = myNew(Son)();
+     console.log(son);
+
+```
+```
+一旦new出一个实例之后, 会给实例添加一个属性,__proto__,
+这个属性指向的就是构造函数的原型,一旦某个属性实例上没有,
+就会去__proto__上去找.
+
+刚new的时候, 函数的原型和实例的原型是一样的.
+function Son () {
+     	this.name = 'mike';
+     	return 123
+     }
+     var son = new Son();
+     console.log(Son.prototype === son.__proto__);// 返回true
+
+可是..
+     Son.prototype = {age:18};
+     console.log(Son.prototype === son.__proto__);// 返回false
+       console.log(son.age);//undefined;
+  其实这个好理解, Son.prototype 和 son.__proto__ 刚开始都指向同一个指针,
+ 只要其中一个用 = 重新赋值,就变得毫无相干.
+ 要谨记的是, son 每次访问的不是 Son.prototype 而是 son.__proto__
+
+更神奇的是这个
+ console.log(son.constructor);// 返回 Son ,因为原来的原型里constructor 存的就是Son
+  console.log(son instanceof Son);// 返回 false! 这你敢信? 
+在写另一篇里我就发现 这个instanceof 是不靠谱的,
+ 只有这个构造函数当前指向的原型在实例的原型链上,才会返回true;
+
+```
+说到这里,我猜你已经被我的文笔搞得想吐了,
+我权当你已经完全明白我刚才讲的东西是什么.
+我们回到继承问题.
+
+我们假定,我们的需求就是要继承原型.
+```
+共享模型
+function Father () {}
+    function Son () {}
+     Son.prototype = Father.prototype;
+     var son = new Son();
+
+封装成函数 
+function inherit (Target, Origin) {
+    	Target.prototype = Origin.prototype;
+    }
+
+缺点是,在Son.prototype上添加东西,会同时改动Father.prototype.
+
+这个时候,我们回头看一看 工厂模式.
+就会发现,这种继承和那种继承压根就是两回事吧?
+难道就我自己这么觉得嘛?
+当然此时我们在function Son里也可以用工厂模式.
+我们想加哪个工厂加哪个工厂,不限数量.
+但原型继承只能指定一个.
+
+```
+
+```
+圣杯模式
+很明显,这个才是值钱的. 以下三种其实都一样.
+版本1.0
+function inherit (Target, Origin) {
+    	function F () {};
+    	F.prototype = Origin.prototype;
+    	Target.prototype = new F();
+    	Target.prototype.constructor = Target;
+    	Target.prototype.uper = Origin.prototype;
+    }
+版本2.0
+var inherit = (function () {
+       function F () {};
+       return function (Target, Origin) {
+       	F.prototype = Origin.prototype;
+       	Target.prototype = new F();
+       	Target.prototype.constructor = Target;
+       	Target.prototype.uper = Origin.prototype;
+       }
+     })();
+版本3.0
+function inherit (Target, Origin) {
+    	var obj =Object.create(Origin.prototype);// 让obj继承Origin.prototype,说过了是吧.
+    	Target.prototype = obj;
+    	Target.prototype.constructor = Target;
+    	Target.prototype.uper = Origin.prototype;
+    }
+
+你可能会好奇
+为什么不绕过F这样
+Target.prototype = new Origin();
+因为new Origin() 出来的对象不是空对象, 或者我们只想继承他原型的,不想继承乱七八糟的.
+```
+
+其实写到这里,应该结束了.
+但我想再写一写, 回头把这部分另起一篇也可以.
+```
+1. new是什么? 看到new 就是用来继承原型的. 如果不继承原型, 不用new也可以达到.
+
+2.我们重新看一下一个函数,当我们看到一个函数的时候,
+应该看到什么?
+
+(function () {
+     	区域1
+     	var obj = {name: 'mike'};
+     	fun.prototype = 区域2
+     	function fun () {
+     		区域3
+     		var count = 1;
+     		
+     		区域4
+     		this.age = age;
+	
+     		return {区域5}
+     	}
+     })();
+
+上面这个结构, 只是我自己想要让自己习惯的一种看函数的方式.
+
+区域1 是 fun的 私有变量区域.
+区域2 是原型区域
+区域3 是正常函数区域,可以定义变量,也可以执行代码,如果区域5返回函数,那么也成为私有变量区域.
+区域4 工厂区? 也就是实例化的地方
+区域5 实际上是硬加的. 但return 可以返回任何形式的东西.
+
+
+所以一个函数返回一个对象的方式有两种,
+一种是return {}
+一种是 new () new 的方式 增加了一个原型.
+
+
+
+
+```
+

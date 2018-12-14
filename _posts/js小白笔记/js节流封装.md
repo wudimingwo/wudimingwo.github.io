@@ -1,0 +1,46 @@
+版本1.0
+```
+function throttle (fn,delay) {
+            var delay = delay || 1000;
+          	var lastTime = 0;
+          	function newFn () {
+          	  if(new Date().getTime() - lastTime >= delay){
+          	    return fn.apply(this,arguments);
+          	    lastTime = new Date().getTime();
+          	  }
+          	}
+          	return newFn;
+          }
+```
+版本2.0
+原型链上封装
+```
+Function.prototype.throttle = function (delay) {
+          	var fn = this;
+          	var lastTime = 0;
+          	function newFn () {
+          	  if(new Date().getTime() - lastTime >= delay){
+                return fn.apply(this,arguments);
+                lastTime = new Date().getTime();
+              }
+          	}
+          	return newFn;
+          }
+```
+版本3.0
+这种需求应该很少.
+能够new实现继承,
+```
+Function.prototype.throttle = function (delay) {
+          	var fn = this;
+          	var lastTime = 0;
+          	newFn.prototype = fn.prototype;// 这里可用圣杯继承代替.
+          	function newFn () {
+          	  if(new Date().getTime() - lastTime >= delay){
+               return fn.apply(this,arguments);
+                lastTime = new Date().getTime();
+              }
+          	}
+          	return newFn;
+          }
+```

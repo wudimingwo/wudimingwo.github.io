@@ -1,0 +1,372 @@
+---
+layout:     post
+title:      "css3笔记_CSS深入理解 vertical-align和line-height的基友关系"
+subtitle:   " \"css3笔记\""
+date:       2018-12-14 12:00:00
+author:     "wudimingwo"
+header-img: "img/post-bg-2015.jpg"
+catalog: true
+tags:
+    - css3
+    - Meta
+---
+参考
+###[CSS深入理解vertical-align和line-height的基友关系](https://www.zhangxinxu.com/wordpress/2015/08/css-deep-understand-vertical-align-and-line-height/)
+### [深入理解css中*vertical-align*属性 - starof - 博客园](https://www.baidu.com/link?url=LrS4rFM54_6x9yN5vLpuMJTwd0NQNOCeY7KvyI0bnmaUoUqVbJt9Mupar4frKJHTPEfcWsBGYLl2N4Ub1FUnGw6GXQykAkEab-yYQJEqEHCalSWEa6dx5X9Yd4zUg78x&wd=&eqid=ecd1073400042c1d000000025be93c75)
+###[深入理解盒子模型——CSS 盒模型Block box与Line box](https://blog.csdn.net/ziminghuohua/article/details/72794852)
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-8137de3580115778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+w3c
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-68265491abe6515b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+作为一个小白,我真的不喜欢CSS...
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-cc9f973aee18929e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+如何确定 共同基线?
+下面几组是没加margin  单纯往里面填文字
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-56f13db6166199d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-738cef102971d3cb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-dac6192d2d65eec0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-4eee572838d92fa4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+我只在 第二个元素上加了 margin-top = 100px;
+结果三个一起动了, 因为共同基线会选最低的. 其他会以自己的基线 去对齐?
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-5060b361a154ca0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+第二个上下加上margin: 100px 0px;
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-251d53fbbecee681.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+当我看完第一篇博客时,我以为我懂了,结果我傻了,
+当我看完第二篇博客时, 我以为终于有点懂了,结果疑点重重混乱了,
+当我看完第三篇博客时,我终于觉得自己稍微有点懂了这个 vertical-aline
+同时, 我对之前没学明白vertical-aline 不感到羞耻了, 
+这玩意跟其他属性比起来确实要稍微复杂一点.
+
+首先我们要找到共同基线,也就是父级的文字?
+看完第三篇之后,才明白,不是父级的文字,
+而是要找line-box 的文字
+什么是line-box? 第三篇博客中写道
+装这一行内所有inline,inline-box的盒子就是line-box
+line-box 的 上边,是所有元素中marin-top的边界线, 也就是最高点.
+而line-box 的 下边, 才是不好确定的.
+
+vertical-aline 默认值时,
+inline-block 没有文字 的margin底部是该元素的基线.
+inline-block 有文字 的最后一行的文字底部是该元素的基线.
+
+所有元素中 最低的基线, 就是 line-box 的基线.
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-15b9a19b6db7f731.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+关键在于, 这个a 也就是 这个假想的基线文字的位置,
+就在这个line-box 的最下面.
+
+vertical-aline 的各种属性 就是根据 
+这个line-box 的顶边,底边,
+以及这个 a的中心,底边,顶边,
+
+看着啊
+html
+```
+         <div class="wrapper">
+           <span>x agj</span>
+           <span>x agj</span>
+           <div class="item3">item3</div>
+         </div>
+```
+scss
+```
+.wrapper{
+    width: 900px;
+    height: 500px;
+    margin: 100px;
+    border: 1px solid black;
+            font-size: 80px;
+        line-height: 180px;
+    background-color: #F23D6A;
+    div{
+        display: inline-block;
+        background-color: #fff;
+        font-size: 40px;
+        line-height: normal;
+        word-wrap: break-word;
+    }
+    span{
+        margin-top: 100px;
+        vertical-align: baseline;
+        display: inline-block;
+        font-size: 80px;
+        line-height: 180px;
+        background-color: #fff;
+        &:nth-of-type(2) {
+            margin: 0;
+        }
+    }
+}
+```
+效果图
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-b376e001a02b0f4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+这默认三个都是 baseline 的时候.
+现在我们假定第一个元素与父级基线也就是line-box 的基线一致.
+(如果这个假设不成立,那么下面的都是错的.)
+
+```
+div{
+            vertical-align: sub;
+}
+span2 {
+            vertical-align: sub;
+}
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-610e072291affd9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+div{
+            vertical-align: super;
+}
+span2 {
+            vertical-align: super;
+}
+```
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-14878d55e1ae609c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+div{
+            vertical-align: text-bottom;
+}
+span2 {
+            vertical-align: text-bottom;
+}
+```
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-6998f806ff7ff146.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+```
+div{
+            vertical-align: text-top;
+}
+span2 {
+            vertical-align: text-top;
+}
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-88484e16c410b2e3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+div{
+            vertical-align: middle;
+}
+span2 {
+            vertical-align: middle;
+}
+```
+这个不清楚, 
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-70dfcc99885911ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+div{
+            width: 200px;
+            height: 200px;
+            vertical-align: bottom;
+}
+span2 {
+        width: 200px;
+        height: 100px;
+        vertical-align: bottom;
+}
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-6b56cdf1c1086e6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+div{
+            width: 200px;
+            height: 200px;
+            vertical-align: top;
+}
+span2 {
+        width: 200px;
+        height: 100px;
+        vertical-align: top;
+}
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-0cf2889834d4ba3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+```
+div{
+            width: 200px;
+            height: 300px;
+            vertical-align: middle;
+}
+span2 {
+        width: 200px;
+        height: 100px;
+        vertical-align: middle;
+}
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-fdbd160fa9db35cb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+我的天.虽然我没记住我自己写的所有内容,
+但感觉自己总结的还挺清晰,还挺牛逼的.哈哈哈,作为一个小白勉励一下自己
+
+那么问题来了,怎么确定line-box的底边?
+我们看上面的几个图时,
+会发现明明发现有时, 都突破了line-box的底边了,
+凭什么最低的那个不算底边?
+凭什么把最前面的元素的底边看成是line-box的底边?
+
+其实我是这么猜测的.
+首先不要计算vertical, 
+而是要先计算width,height,padding,
+或者是多行时的文字底边的高度.
+经过这些属性,以及刚开始说的
+没有文字的margin底边,和有文字的最后一行文字底边,
+进行比较,哪个最低,哪个就是line-box 的 底边.
+
+然后再计算vertical-aline.
+之所以之前搞不明白的原因是,
+我们看到的永远是
+这些影响位置的属性综合计算的最后结果.
+这尼玛,我讨厌css, 水太他么深了,太费时间了.
+而且搞完,不像js,会有应用上和思维上的某种拓展性?
+没感觉价值特别大.但不会又感觉缺了条腿.妈的.
+
+其实写这篇文章的起始原因是,
+看到一篇文章中,垂直居中的原理,利用了这个,
+当时实在是没看懂
+html
+```
+         <div class="wrapper">
+           <div class="item"></div>
+         </div>
+```
+scss
+```
+.wrapper{
+    width: 500px;
+    height: 500px;
+    background-color: #F08080;
+    font-size: 0px;// 对垂直位置没有影响,对水平有影响
+    // 难道是因为,两个inline-block 之间有个空格 占了1em的空间的原因?
+    text-align: center;// 用来水平居中的
+    .item{
+        display: inline-block;// 只能用在inline-block 或者 inline上
+        width: 100px;
+        height: 100px;
+        background-color: #F23D6A;
+        vertical-align: middle;// 会把自身的居中在父级x的中心
+    }
+    &::after{
+        display: inline-block;
+        content: "";
+        vertical-align: middle;// 决定基准x的位置
+        width: 0;
+        height: 100%;// 为了决定父级基准x的位置 撑大成父级高度.
+    }
+}
+
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-6936cdf1750c2f60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+当然上图中x是我为了理解加上去的.
+
+
+============================
+发现另一个问题.
+html
+```
+           <div class="item">item</div>
+           <div class="item1">item1</div>
+           a
+```
+scss
+```
+div{
+    width: 100px;
+    background-color: #F08080;
+    display: inline-block;
+    border: 1px solid black;
+    &.item{
+        vertical-align: bottom;
+        height: 50px;
+        
+    }
+    &.item1{
+        vertical-align: baseline;
+        height: 500px;
+    }
+}
+
+```
+效果图
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-b0be884865614a87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+这个就推翻了我的一个想当然的假设,
+我以为,父级基准x的的位置一定是从line-box底边去找.
+这个图告诉我,line-box 和基准x的位置可以差的很远.
+实际上上面那个居中案例就揭示了这个道理.
+也就是说上面的那些推理是用来判断 父级基准x的位置,
+而line-box的底边则是行内元素当中最底边为准?
+上面有张图,我加一下line-box
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-523ecb6099494801.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+如果我们的猜测合理, 那么我们如果把第三个改成bottom时,
+应该对齐第二个元素的底边
+```
+.item1{vertical-aline:baseline,margin-top:400px}// 反正保证他的基准x是最低的.
+.item2{vertical-aline:middle}//让他的元素底边最后会超出元素1
+.item3{vertical-aline:bottom}// 看他对齐哪里,就可以判断line-box的底边了. 
+```
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-5494ce45bc3deb6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+猜想吻合.
+首先证明, line-box 的底边右行内元素最低决定, 
+(合理猜测,line-box的顶边应该由行内元素最高决定?)
+其次证明,line-box的底边并不能决定 父级基准x的位置, 
+基准x的位置应该由昨天,也就是上面说的,根据mangin和文字最底行的比较来决定.
+第三,我们可以说, vertical-aline中的 top , bottom两个值,的元素
+能参与影响 line-box的底边,
+但无法参与影响 基准x的位置.
+
+然后我决定证实猜想,又试了一下,稍微改了下,前面提到的代码.
+html
+```
+             <div class="item1">xitem1x</div>
+             <div class="item2">xitem2x</div>
+             <div class="item3"></div>
+             asja
+```
+scss
+```
+div{
+    width: 100px;
+    display: inline-block;
+}
+.item1{
+    height: 100px;
+    background-color: #F08080;
+    vertical-align: bottom;
+}
+.item2{
+    height: 500px;
+    background-color: #F0AD4E;
+}
+.item3{
+    margin-top: 100px;
+    height: 100px;
+    background-color: #A71D5D;
+}
+```
+效果图
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-c745ab2bf91a13c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+所以我们可以得出又一个结论是,
+会先计算基准x的值, 然后计算line-box的底边,最后再计算bottom位置的元素.
+
+就这张图,,如果放在前天以前, 我肯定想不出来是为啥..
+估计大多数跟我一样的小白看到了也很难讲清楚原因.
+
+现在感觉,面对布局时,稍微有点底子了,以前这一块的知识点薄弱,
+每次都会挺墨迹的.因为总是有疑点,有时解决问题了,也不知道为什么就解决了.
+
+希望掌握到这些,能够满足日常需求.
+还是要给自己一些赞美的.
+
+最后来张图, 稍微提及这个是因为想到 博客一, 大神提倒的问题,
+详情看博客
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-0db36489a20b25d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

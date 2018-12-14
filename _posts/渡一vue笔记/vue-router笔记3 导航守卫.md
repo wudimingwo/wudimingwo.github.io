@@ -1,0 +1,135 @@
+#导航守卫
+路由实例(new VueRouter)  beforeEach
+路由配置项                          beforeEnter
+组件                                     beforeRouteEnter
+
+这是哪个函数里的this指向都是undefined
+
+router.js
+```
+import Vue from "vue"
+import VueRouter from "vue-router"
+
+Vue.use(VueRouter);
+
+import Books from "../components/Books.vue"
+import yf from "../components/yj.vue"
+
+
+import math from "../components/math.vue"
+import edu from "../components/edu.vue"
+import internet from "../components/internet.vue"
+
+
+import ad from "@/components/ad.vue"
+
+let Foods = () => import("../components/Foods.vue")
+// 路由懒加载
+let router = new VueRouter({
+    routes : [
+      {
+        path : "/books",
+        name : "books",
+        meta : {
+          index : 2
+        },
+        beforeEnter (to, from, next) {// 导航守卫第二层
+          console.log(to,from);
+          next(false)
+        },
+        component : Books
+      },
+      {
+        path : "/foods",
+        name : "foods",
+        meta : {
+          index : 1,
+          flag : false
+        },        
+        component : Foods,
+        children : [
+          {
+            path : "edu",
+            component : edu,
+            name : "edu"
+          },
+          {
+            path : "math",
+            component : math,
+            name : "math"
+          },
+          {
+            path : "internet",
+            component : internet,
+            name : "internet"
+          }
+        ]
+      },
+      {
+        path : "/yf",
+        name : "yf",
+        meta : {
+          index : 3
+        },        
+        component : yf
+      },
+      {
+        path : "*",
+        redirect : "/foods"
+      },
+    
+  ],
+    linkActiveClass : 'active',
+    linkExactActiveClass : 'exact'
+});
+
+
+router.beforeEach(function (to,from,next) {// 导航守卫第一层
+	if(to.path == '/foods/edu'){
+	  if(to.matched[0].meta.flag) {
+	    next();
+	  }else {
+	    next(false);
+	  }
+	}else if(to.path == '/foods/math'){
+    if(!to.matched[0].meta.flag) {
+      next();
+    }else {
+      next(false);
+    }	  
+	}else {
+	  next();
+	}
+});
+
+export default router
+```
+yf.vue
+```
+<template>
+  <div class="wrapper">
+    <div>这是yj</div>
+  </div>
+</template>
+
+<script>
+  
+  
+    export default {
+      name : "yj",
+      components : {
+        
+      },
+      beforeRouteEnter (to, from, next) {// 导航守卫第三层
+        console.log(to, from);
+        next();
+
+      }
+    }
+</script>
+
+<style>
+  
+</style>
+
+```

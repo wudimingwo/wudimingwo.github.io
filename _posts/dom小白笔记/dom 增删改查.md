@@ -1,0 +1,81 @@
+本篇内容来自渡一公开课笔记
+
+查:获取:
+```
+//          获取dom元素的基本操作
+            document.getElementById();
+            document.getElementsByClassName();//ie8 以下不支持
+            document.getElementsByName();//基本不用 ie 不支持
+            document.getElementsByTagName();
+            document.querySelector();//css选择器 ,静态
+            document.querySelectorAll();//css选择器,一组,静态.
+            
+            
+            根据节点之间的关系,获取节点/节点有不同类型, dom 只是其中一种.
+            parentNode// 父元素,到头是 document
+            childNodes// 子节点们 第一层,包含文本节点
+            firstChild//第一个节点
+            lastChild//最后一个节点
+            nextSibling//下一个节点
+            previousSibling//前一个节点.
+            
+            区分不同类型节点,nodetype
+            元素节点 -- 1
+            属性节点 -- 2
+            文本节点 -- 3
+            注释节点 -- 8
+            document -- 9
+            DocumentFragment -- 11
+            
+            nodeName 返回标签名.
+            nodeValue 获取文本节点,注释节点的内容
+            attributes 返回dom元素节点的属性集合.
+            
+            根据元素节点之间的关系,获取元素 /ie9一下不支持 除了children
+            parentElement //父元素节点 ,到头是 html
+            children //返回当前元素的子节点
+            firstElementChild //第一个元素节点 ie不兼容
+            lastElementChild // 最后一个元素节点 ie 不兼容
+            nextElementSibling// 下一个兄弟元素节点 ie 不兼容
+            previousElementSibling // 前一个兄弟元素节点 ie 不兼容
+            
+            Node.hasChildNodes()// 判断有没有子节点.
+```
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-cfdc155fc0a1b327.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![image.png](https://upload-images.jianshu.io/upload_images/13637909-0b10637081f68aab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+首先 document的构造函数是,HTMLDocument.prototype
+所以上面所有的方法, document都能访问.
+问题是Element.prototype上 有没有才决定 div,i,span这些能不能调用.
+也就是说 byTagName,byClassName,querySelector 都是能用的.
+
+也就是说大部分都是可以用的,
+只有 ById ByName 是只有 document才能用.
+
+如果我们想封装一个方法,让dom元素能够直接调用,就应该定义在dom元素的原型链上,
+看图就知道,要么定义在 Element.prototype 上要么定义在Node上
+
+
+------------------------------------------------
+            增
+            document.createElement('div')
+            插
+            parent.appendChild(child)
+            parent.insertBefore(a,b)
+            删
+            parent.removeChild(child);// 剪切
+            child.remove()// 自尽
+            替换
+            parent.replaceChild(new,origin)
+
+---------------------------------------------------
+
+DOM基本操作
+innerHTML
+innerText / 老版本火狐 textContent
+
+getAttribute('class')
+setAttribute('class','mike')

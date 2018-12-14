@@ -1,0 +1,543 @@
+---
+layout:     post
+title:      "css3作业-展开照片列表"
+subtitle:   " \"css3笔记\""
+date:       2018-12-14 12:00:00
+author:     "wudimingwo"
+header-img: "img/post-bg-2015.jpg"
+catalog: true
+tags:
+    - css3
+    - Meta
+---
+html
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewprot" content="width=device-width, initial-scale=1.0"/>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+        <title>dddd</title>
+        <link rel="stylesheet" type="text/css" href="css/test.css"/>
+        <style type="text/css">
+            
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+          <div class="content">
+            <div class="item hide">
+                <div class="left">
+                  bird
+                </div>
+                <div class="close">
+                  X
+                </div>
+                <div class="title">
+                  title
+                </div>
+                <div class="bg"></div>
+            </div>
+            <div class="item hide">
+                <div class="left">
+                  bird
+                </div>
+                <div class="close">
+                  X
+                </div>
+                <div class="title">
+                  title
+                </div>
+                <div class="bg"></div>
+            </div>
+            <div class="item hide">
+                <div class="left">
+                  bird
+                </div>
+                <div class="close">
+                  X
+                </div>
+                <div class="title">
+                  title
+                </div>
+                <div class="bg"></div>
+            </div>
+            <div class="item hide">
+                <div class="left">
+                  bird
+                </div>
+                <div class="close">
+                  X
+                </div>
+                <div class="title">
+                  title
+                </div>
+                <div class="bg"></div>
+            </div>
+            <div class="item hide">
+                <div class="left">
+                  bird
+                </div>
+                <div class="close">
+                  X
+                </div>
+                <div class="title">
+                  title
+                </div>
+                <div class="bg"></div>
+            </div>
+            <div class="item hide">
+                <div class="left">
+                  bird
+                </div>
+                <div class="close">
+                  X
+                </div>
+                <div class="title">
+                  title
+                </div>
+                <div class="bg"></div>
+            </div>
+          </div>
+        </div>
+        <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+        <script type="text/javascript">
+            
+            $(function () {
+            	setTimeout(function () {
+            		$(".item").removeClass("hide");
+            	},10);
+            	//点击item title 消失, 
+            	$(".item").click(function (e) {
+            	  $(this).addClass("inner").siblings().addClass("hide");
+            	})
+            	
+            	$(".close").click(function (e) {
+            		$(".item").removeClass('inner');
+            		$(".item").removeClass('hide');
+            		e.stopPropagation();
+            	})
+            });
+            
+        </script>
+    </body>
+</html>
+
+```
+scss
+```
+@import "new_file.scss";
+
+:root,body,.wrapper{
+    width: 100%;
+    height: 100%;
+}
+.wrapper{
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .content{
+        width: 80%;
+        height: 80%;
+        display: flex;
+        justify-content: space-between;
+        overflow: hidden;
+        cursor: pointer;
+        @for $i from 1 through 6 {
+           .item:nth-of-type(#{$i}) .bg{
+                height: 100%;
+                background-image: url(../img/#{$i}.jpg);
+            }
+        }
+        .item{
+            width: 16%;
+            height: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            border-radius: 15px;
+            position: relative;
+            text-align: center;
+            transition: transform 1s, width 1s,height 1s;
+            .left,.close{
+                display: none;
+            }
+            .title{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                font-size: 30px;
+                font-weight: bold;
+                color: pink;
+                transition: transform 0.5s; 
+                &:after{
+                    content: "";
+                    display: inline-block;
+                    height: 100%;
+                    vertical-align: middle;
+                }
+            }
+            
+            
+            &.inner{
+               width: 100%;
+               height: 100%;
+               .title{
+                   display: none;
+               }
+               .left{
+                   display: block;
+                   position: absolute;
+                   top: 30px;
+                   left: 30px;
+                   color: white;
+                   font-size: 30px;
+                   font-weight: bold;
+                   transition: transform 0.5s,background-color 0.5s;  
+                   &:hover{
+                       color: #333333;
+                       
+                       transform: scale(1.5);
+                   }
+               }
+               .close{
+                   display: block;
+                   position: absolute;
+                   top: 30px;
+                   right: 30px;
+                   color: white;
+                   font-size: 30px;
+                   font-weight: bold;
+                   padding: 10px;
+                   transition: transform 0.5s,background-color 0.5s;  
+                   &:hover{
+                       color: #333333;
+                       
+                       transform: scale(1.5);
+                   }
+               }
+               .bg{
+                   width: 100%;
+                   height: 100%;
+                   background-size: 100% 100%;
+               }
+            }
+            &.show{
+                display: block;
+            }
+            &.hide{
+                transform: translateY(-110%);
+                width: 0;
+                height: 0;
+            }
+            &:hover{
+                .title{
+                    transform: scale(1.5);
+                }
+            }
+        }
+    }
+    
+}
+
+```
+
+小松老师版
+html
+```
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>照片转轴</title>
+		<link rel="stylesheet" type="text/css" href="font/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="css.css"/>
+	</head>
+	<body>
+		<div class="wrapper">
+			<ul class="content">
+				<li class="item">
+					<div class="inner">
+						<div class="bg"></div>
+						<div class="title">title</div>
+						<div class="dir">
+							<div class="header">bird</div>
+							<div class="close iconfont icon-close-circle"></div>
+						</div>
+					</div>
+				</li>
+				<li class="item">
+					<div class="inner">
+						<div class="bg"></div>
+						<div class="title">title</div>
+						<div class="dir">
+							<div class="header">bird</div>
+							<div class="close iconfont icon-close-circle"></div>
+						</div>
+					</div>
+				</li>
+				<li class="item">
+					<div class="inner">
+						<div class="bg"></div>
+						<div class="title">title</div>
+						<div class="dir">
+							<div class="header">bird</div>
+							<div class="close iconfont icon-close-circle"></div>
+						</div>
+					</div>
+				</li>
+				<li class="item">
+					<div class="inner">
+						<div class="bg"></div>
+						<div class="title">title</div>
+						<div class="dir">
+							<div class="header">bird</div>
+							<div class="close iconfont icon-close-circle"></div>
+						</div>
+					</div>
+				</li>
+				<li class="item">
+					<div class="inner">
+						<div class="bg"></div>
+						<div class="title">title</div>
+						<div class="dir">
+							<div class="header">bird</div>
+							<div class="close iconfont icon-close-circle"></div>
+						</div>
+					</div>
+				</li>
+				<li class="item">
+					<div class="inner">
+						<div class="bg"></div>
+						<div class="title">title</div>
+						<div class="dir">
+							<div class="header">bird</div>
+							<div class="close iconfont icon-close-circle"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<script src="main.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+		</script>
+	</body>
+</html>
+
+```
+js
+```
+$(function () {
+	setTimeout(function () {
+		$(".wrapper").addClass('init');
+	},200);
+	
+	$(".item").on('click',function () {
+		$(this).addClass('show').siblings().addClass('hide');
+		$(".title").hide('slow');
+	});
+	$(".close").on('click',function (e) {
+		$(".show").removeClass("show");
+		$(".hide").removeClass("hide");
+		$(".title").show('slow');
+		e.stopPropagation();
+	});
+});
+
+```
+css
+```
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+html,body,.wrapper{
+	width: 100%;
+	height: 100%;
+}
+
+.wrapper {
+	display: flex;
+	flex-flow: row;
+	justify-content: center;
+	align-items: center;
+	background-color: #000;
+}
+
+.wrapper .content {
+	width: 80%;
+	height: 80%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.wrapper .content .item {
+	height: 100%;
+	width: 16%;
+	border-radius: 20px;
+	background-color: #333;
+	/*overflow: hidden;*/
+	transition: height 0.5s linear 0.5s,width 0.4s linear;
+}
+
+.wrapper .content .item.hide {
+	/*待删*/
+	height: 0px;
+	width: 0px;
+	transition: height 0.5s linear,width 0.4s linear 0.5s;
+	
+}
+.wrapper .content .item.show {
+	/*待删*/
+	height: 100%;
+	width: 100%;
+	transition: height 0.3s 0.7s,width 0.3s 0.7s;
+}
+.wrapper .content .item .inner .dir{
+	/*待删*/
+	position: absolute;
+	left: 0;
+	top: 30px;
+	width: 100%;
+	height: 30px;
+	opacity: 0;
+	transition: opacity 0.5s;
+}
+
+.wrapper .content .item .inner .dir .header {
+	position: absolute;
+	left: 50px;
+	color: #333;
+	font: 24px/1.5 "微软雅黑";
+	font-weight: bold;
+}
+.wrapper .content .item .inner .dir .close {
+	position: absolute;
+	right: 50px;
+	font-size: 40px;
+	color: black;
+	cursor: pointer;
+}
+.wrapper .content .item.show .inner .dir .close {
+	transform: rotateZ(360deg);
+	transition: transform 0.5s linear 1s;
+}
+.wrapper .content .item.show .inner .dir .close:hover {
+	transform: rotateZ(180deg);
+	transition: transform 0.5s linear;
+	
+}
+
+.wrapper .content .item.show .inner .dir {
+	/*待删*/
+	transition: opacity 0.5s 1s;
+	opacity: 1;
+}
+
+.wrapper .content .item .inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	transform: translateY(100%);
+	/*animation: goup 0.8s ease;*/
+}
+
+.wrapper.init .content .item .inner {
+	transform: translateY(0%);
+}
+
+.wrapper .content .item:nth-of-type(1) .inner{
+	/*animation: goup 0.8s ease 0.1s;*/
+	transition: transform 0.8s ease .1s;
+	
+}
+.wrapper .content .item:nth-of-type(2) .inner{
+	/*animation: goup 0.8s ease 0.1s;*/
+	transition: transform 0.8s ease .2s;
+	
+}
+.wrapper .content .item:nth-of-type(3) .inner{
+	/*animation: goup 0.8s ease 0.2s;*/
+	transition: transform 0.8s ease .3s;
+	
+}
+.wrapper .content .item:nth-of-type(4) .inner{
+	/*animation: goup 0.8s ease 0.3s;*/
+	transition: transform 0.8s ease .4s;
+}
+.wrapper .content .item:nth-of-type(5) .inner{
+	/*animation: goup 0.8s ease 0.4s;*/
+	transition: transform 0.8s ease .5s;
+}
+.wrapper .content .item:nth-of-type(6) .inner{
+	/*animation: goup 0.8s ease 0.5s;*/
+	transition: transform 0.8s ease .6s;
+}
+
+.wrapper .content .item .inner .bg {
+	width: 100%;
+	height: 100%;
+	border-radius: 20px;
+	background-image: url('./img/1.jpg');
+	background-size: cover;
+	background-position: center;
+	opacity: 0.5;
+	/*这个还挺奇怪的,background 不同,难道background-size position 属性会失效?*/
+}
+.wrapper .content .item:hover .inner .bg {
+	opacity: 1;
+}
+/*.wrapper .content li.item:nth-of-type(n) .inner .bg {*/
+	/*这你妈还挺逗的,权重上来之后,竟然还有效果*/
+	/*background-size: cover;*/
+	/*background-position: center;*/
+/*}*/
+.wrapper .content .item:nth-of-type(2) .inner .bg{
+	background-image: url('./img/2.jpg') ;
+	
+	/*如果用background: url('./img/2.jpg'); 则会覆盖上面的 size,position属性*/
+	/*复合属性会覆盖掉单个属性,那个学员说的应该是对的*/
+	/*如果用background-image: url('./img/2.jpg') no-repeat; 后面这个repeat 绝对不能写 */
+	
+}
+.wrapper .content .item:nth-of-type(3) .inner .bg{
+	background-image: url('./img/3.jpg') ;
+}
+.wrapper .content .item:nth-of-type(4) .inner .bg{
+	background-image: url('./img/4.jpg');
+}
+.wrapper .content .item:nth-of-type(5) .inner .bg{
+	background-image: url('./img/1.jpg');
+}
+.wrapper .content .item:nth-of-type(6) .inner .bg{
+	background-image: url('./img/2.jpg');
+}
+
+.wrapper .content .item .inner .title {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	color: #000000;
+	font: 22px/1.5 "微软雅黑";
+	font-weight: bold;
+	transition: font-size 0.2s;	
+}
+.wrapper .content .item:hover .inner .title {
+	font-size: 25px;
+}
+
+@keyframes goup{
+	from{transform: translateY(100%);}
+	to{transform: translateY(0%);}
+}
+
+```
